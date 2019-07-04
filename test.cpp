@@ -37,19 +37,55 @@ int main( int argc, char** argv ) {
   }
 
   cv::Mat frame;
-  cv::Point tochka(200, 200);
-  cv::Scalar svet(255,255,255);
+
+  cv::Scalar color1(138,117,15),
+	     color2(101, 17, 156), 
+	     color3(29, 118, 35);
+  cv::RNG rng(12345);
+  int radius =30;
+  int px=400;
+  int py =300;
+  int x=5;
+  int y=5;
+  int flag=0;
+
+
   for(;;) {
 
     cap >> frame;
-
+    
     if( frame.empty() ) break; // Ran out of film
-    cv::circle(frame, tochka, 45, svet);
+    
+    cv::circle(frame, cv::Point(px,frame.rows-py),radius, color1);
+    cv::rectangle(frame, cv::Point(px-radius,frame.rows-py+radius), cv::Point(px+radius,frame.rows-py-radius), color2);
+    cv::putText(frame, "I",cv::Point(px-radius/2,frame.rows-py+radius/2+5),5,3, color3 );
+
+
+    if (py>=frame.rows-radius or py<=radius) {
+	y=-y;
+	flag=1;
+    }
+    if (px>=frame.cols-radius or px<=radius) {
+	x=-x;
+	flag=1;
+    }
+    
+    if (flag==1){
+	color1=cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
+	color2=cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
+	color3=cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
+	flag=0;
+    }
+
+    px=px+x;
+    py=py+y;
+    
+
 
 
     cv::imshow( "Example 2-10", frame );
 
-    if( (char) cv::waitKey(33) >= 0 ) break;
+    if( (char) cv::waitKey(30) >= 0 ) break;
 
   }
 
